@@ -4,8 +4,16 @@ Simple and easy to use json/post API mock server
 
 ## Install
 
+Install binary
+
 ```
-go get -u fullpipe/jmock
+go get -u github.com/fullpipe/jmock
+```
+
+or use with docker
+
+```
+docker run -v ${PWD}/mocks:/mocks fullpipe/jmock
 ```
 
 ## Usage
