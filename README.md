@@ -1,5 +1,7 @@
 # Jmock
 
+[![Build Status](https://travis-ci.com/fullpipe/jmock.svg?branch=master)](https://travis-ci.com/fullpipe/jmock)
+
 Simple and easy to use json/post API mock server
 
 ## Install
