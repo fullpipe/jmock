@@ -4,9 +4,6 @@ FROM bradobro/golang-alpine-dep:latest AS builder
 COPY . $GOPATH/src/fullpipe/jmock/
 WORKDIR $GOPATH/src/fullpipe/jmock/
 
-# Fetch dependencies.
-RUN dep ensure
-
 #Build the binary.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o /go/bin/jmock
 
