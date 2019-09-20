@@ -193,3 +193,66 @@ func TestLooksLikeJson(t *testing.T) {
 		}
 	}
 }
+
+var headerTests = []struct {
+	headers     map[string]string
+	mockHeaders map[string]string
+	result      bool
+}{
+	{
+		nil,
+		nil,
+		true,
+	},
+	{
+		map[string]string{"foo": "bar"},
+		nil,
+		true,
+	},
+	{
+		map[string]string{"foo": "bar"},
+		map[string]string{"foo": "bar"},
+		true,
+	},
+	{
+		map[string]string{"foo": "bar"},
+		map[string]string{"foo": "ba*"},
+		true,
+	},
+	{
+		map[string]string{"foo": "bar"},
+		map[string]string{"foo": "notbar"},
+		false,
+	},
+	{
+		map[string]string{"foo": "asdsbar"},
+		map[string]string{"foo": "a*bar"},
+		true,
+	},
+}
+
+func TestLooksLikeHeaders(t *testing.T) {
+	for idx, tc := range headerTests {
+		real := httptest.NewRequest("POST", "/api", nil)
+
+		for key, header := range tc.headers {
+			real.Header.Add(key, header)
+		}
+
+		mock := Request{Method: "POST", Header: tc.mockHeaders}
+
+		if tc.result != mock.LooksLike(real) {
+			if tc.result {
+				t.Error(
+					"#", idx, ": Input", real,
+					"should looks like mock", mock,
+				)
+			} else {
+				t.Error(
+					"#", idx, ": Input", real,
+					"should NOT looks like mock", mock,
+				)
+			}
+		}
+	}
+}
