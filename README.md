@@ -30,6 +30,9 @@ request matching. For example `./mocks/users.json`:
   {
     "request": {
       "method": "POST",
+      "headers": {
+        "Authorization": "Bearer *"
+      },
       "url": "/api/users",
       "json": {
         "name": "*"
@@ -160,5 +163,4 @@ redirect matched request to real API.
 ## Todo
 
 - request match level
-- headers matching
 - add more test cases

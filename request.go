@@ -13,10 +13,11 @@ import (
 
 // Request describes mock request
 type Request struct {
-	Method string            `json:"method,omitempty"`
-	URL    string            `json:"url,omitempty"`
-	Post   map[string]string `json:"post,omitempty"`
-	JSON   *json.RawMessage  `json:"json,omitempty"`
+	Method  string            `json:"method,omitempty"`
+	URL     string            `json:"url,omitempty"`
+	Post    map[string]string `json:"post,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
+	JSON    *json.RawMessage  `json:"json,omitempty"`
 }
 
 // LooksLike checks if mock request looks like real request
@@ -33,15 +34,24 @@ func (mockRequest Request) LooksLike(req *http.Request) bool {
 			return false
 		}
 	}
+
 	if mockRequest.Method != "" {
 		g = glob.MustCompile(mockRequest.Method)
 		if !g.Match(req.Method) {
 			return false
 		}
 	}
+
 	for key, value := range mockRequest.Post {
 		g = glob.MustCompile(value)
 		if !g.Match(req.PostFormValue(key)) {
+			return false
+		}
+	}
+
+	for key, value := range mockRequest.Headers {
+		g = glob.MustCompile(value)
+		if !g.Match(req.Header.Get(key)) {
 			return false
 		}
 	}
