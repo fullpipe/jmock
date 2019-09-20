@@ -108,7 +108,8 @@ You could match request by:
 
 ### Response
 
-Response for matched request with required response:
+For matched request server returns response:
+
 ```
     "response": {
       "code": 200, // status code
@@ -121,8 +122,8 @@ Response for matched request with required response:
 
 ### Proxy (optional)
 
-If you get one mock working. You could simply delete it. Or use `proxy` to
-redirect matched request to real API.
+If you get one mock working. You could use `proxy` to
+bypass matched request to real API.
 
 ```
     "proxy": "http://realapihost.loc"
