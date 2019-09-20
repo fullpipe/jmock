@@ -229,6 +229,11 @@ var headerTests = []struct {
 		map[string]string{"foo": "a*bar"},
 		true,
 	},
+	{
+		map[string]string{"foo": "foo"},
+		map[string]string{"foo": ""},
+		false,
+	},
 }
 
 func TestLooksLikeHeaders(t *testing.T) {
@@ -239,7 +244,7 @@ func TestLooksLikeHeaders(t *testing.T) {
 			real.Header.Add(key, header)
 		}
 
-		mock := Request{Method: "POST", Header: tc.mockHeaders}
+		mock := Request{Method: "POST", Headers: tc.mockHeaders}
 
 		if tc.result != mock.LooksLike(real) {
 			if tc.result {

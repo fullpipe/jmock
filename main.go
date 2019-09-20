@@ -67,6 +67,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 
 	if mock == nil {
 		log.Println("No mock found for request")
+		w.WriteHeader(501)
 		return nil
 	}
 
