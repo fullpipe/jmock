@@ -16,7 +16,7 @@ go get -u github.com/fullpipe/jmock
 or use with docker
 
 ```
-docker run -v ${PWD}/mocks:/mocks fullpipe/jmock
+docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock
 ```
 
 ## Usage
