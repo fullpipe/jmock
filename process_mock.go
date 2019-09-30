@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -33,7 +34,10 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 			pr.URL.Scheme = "http"
 		}
 
-		client := &http.Client{}
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Transport: tr}
 		resp, err := client.Do(pr)
 		if err != nil {
 			return err
