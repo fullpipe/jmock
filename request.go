@@ -16,6 +16,7 @@ type Request struct {
 	Method  string            `json:"method,omitempty"`
 	URL     string            `json:"url,omitempty"`
 	Post    map[string]string `json:"post,omitempty"`
+	Query   map[string]string `json:"query,omitempty"`
 	Headers map[string]string `json:"headers,omitempty"`
 	JSON    *json.RawMessage  `json:"json,omitempty"`
 }
@@ -38,6 +39,13 @@ func (mockRequest Request) LooksLike(req *http.Request) bool {
 	if mockRequest.Method != "" {
 		g = glob.MustCompile(mockRequest.Method)
 		if !g.Match(req.Method) {
+			return false
+		}
+	}
+
+	for key, value := range mockRequest.Query {
+		g = glob.MustCompile(value)
+		if !g.Match(req.URL.Query().Get(key)) {
 			return false
 		}
 	}
@@ -95,11 +103,9 @@ func compareJSON(mock []byte, real []byte, dataType jsonparser.ValueType) bool {
 	case jsonparser.Array:
 		jsonparser.ArrayEach(mock, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			rvalue, _, _, err := jsonparser.Get(real, fmt.Sprintf("%s%d%s", "[", offset-1, "]"))
-			//log.Println(value, rvalue, "asd", log.Sprintf("%s%d%s", "[", offset, "]"), strings.Join([]string{"[", string(offset), "]"}, ""), offset)
 			if err != nil {
 				jsonMatches = false
 			}
-			//log.Println("compareArray: ", compareJson(value, rvalue, dataType))
 
 			if !compareJSON(value, rvalue, dataType) {
 				jsonMatches = false

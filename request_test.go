@@ -261,3 +261,47 @@ func TestLooksLikeHeaders(t *testing.T) {
 		}
 	}
 }
+
+var queryTests = []struct {
+	url    string
+	query  map[string]string
+	result bool
+}{
+	{
+		"/page?foo=bar",
+		map[string]string{"foo": "*"},
+		true,
+	},
+	{
+		"/page?foo=bar",
+		map[string]string{"foo": "ba*", "bar": "no"},
+		false,
+	},
+	{
+		"/page?foo=bar&bar=no",
+		map[string]string{"foo": "ba*", "bar": "no"},
+		true,
+	},
+}
+
+func TestLooksLikeQueryParams(t *testing.T) {
+	for idx, tc := range queryTests {
+		real := httptest.NewRequest("GET", tc.url, nil)
+
+		mock := Request{Method: "GET", URL: "*", Query: tc.query}
+
+		if tc.result != mock.LooksLike(real) {
+			if tc.result {
+				t.Error(
+					"#", idx, ": Input", real,
+					"should looks like mock", mock,
+				)
+			} else {
+				t.Error(
+					"#", idx, ": Input", real,
+					"should NOT looks like mock", mock,
+				)
+			}
+		}
+	}
+}

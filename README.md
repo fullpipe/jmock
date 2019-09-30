@@ -95,6 +95,12 @@ You could match request by:
     "request": {
       "method": "POST", // http method
       "url": "/api/users/*", // query path
+      "headers": {
+        "Authorization": "Bearer *"
+      },
+      "query" { // get params
+          "country": "R*"
+      },
       "post": { // post variables
           "first_name": "Jo*",
           "last_name": "?oe"
