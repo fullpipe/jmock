@@ -122,6 +122,9 @@ For matched request server returns response:
       "body": "plain text or html", // response body
       "json": { // response body with json
         "name": "John Doe"
+      },
+      "headers": { // add response headers if required
+        "Access-Control-Allow-Origin": "*"
       }
     }
  ```
