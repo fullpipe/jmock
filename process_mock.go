@@ -54,6 +54,12 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 		return nil
 	}
 
+	if nil != mock.Response.Headers {
+		for key, value := range *mock.Response.Headers {
+			w.Header().Set(key, value)
+		}
+	}
+
 	if mock.Response.JSON != nil && mock.Response.Body == nil {
 		w.Header().Set("Content-Type", "application/json")
 	}
