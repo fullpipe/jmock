@@ -29,18 +29,7 @@ func main() {
 				log.Fatal(err)
 			}
 
-			for _, f := range files {
-				temp, _ := ioutil.ReadFile(f)
-				var mocks []Mock
-
-				if err := json.Unmarshal(temp, &mocks); err != nil {
-					log.Printf("Unable to parse %s file", f)
-				}
-
-				collection.Append(mocks)
-
-				log.Println("Mocks found:", len(collection.mocks))
-			}
+			buildCollection(files)
 
 			http.HandleFunc("/", errorHandler(httpHandler))
 			log.Println("Listening on port", fmt.Sprintf(":%d", Port))
@@ -58,8 +47,23 @@ func main() {
 	}
 }
 
+func buildCollection(files []string) {
+	for _, f := range files {
+		temp, _ := ioutil.ReadFile(f)
+		var mocks []Mock
+
+		if err := json.Unmarshal(temp, &mocks); err != nil {
+			log.Printf("Unable to parse %s file", f)
+		}
+
+		collection.Append(mocks)
+
+		log.Println("Mocks found:", len(collection.mocks))
+	}
+}
+
 func httpHandler(w http.ResponseWriter, r *http.Request) error {
-	body := GetBodyCopy(r)
+	body := getBodyCopy(r)
 
 	mock := collection.Lookup(r)
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
@@ -73,7 +77,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 	return ProcessMock(w, r, mock)
 }
 
-func GetBodyCopy(req *http.Request) []byte {
+func getBodyCopy(req *http.Request) []byte {
 	bodyBytes, _ := ioutil.ReadAll(req.Body)
 	req.Body.Close()
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))

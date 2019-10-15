@@ -69,7 +69,7 @@ func (mockRequest Request) LooksLike(req *http.Request) bool {
 			log.Panicln(err)
 		}
 
-		body := GetBodyCopy(req)
+		body := getBodyCopy(req)
 
 		if !compareJSON(*mockRequest.JSON, body, dataType) {
 			return false
