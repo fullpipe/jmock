@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -65,15 +64,13 @@ func (mockRequest Request) LooksLike(req *http.Request) bool {
 	}
 
 	if mockRequest.JSON != nil {
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Panicln(err)
-		}
-
 		_, dataType, _, err := jsonparser.Get(*mockRequest.JSON)
 		if err != nil {
 			log.Panicln(err)
 		}
+
+		body := GetBodyCopy(req)
+
 		if !compareJSON(*mockRequest.JSON, body, dataType) {
 			return false
 		}
@@ -84,7 +81,6 @@ func (mockRequest Request) LooksLike(req *http.Request) bool {
 
 func compareJSON(mock []byte, real []byte, dataType jsonparser.ValueType) bool {
 	jsonMatches := true
-	//log.Println(string(mock), string(real), dataType, glob.Glob(string(mock), string(real)))
 
 	switch dataType {
 	case jsonparser.Object:
