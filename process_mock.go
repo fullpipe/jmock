@@ -11,8 +11,7 @@ import (
 
 // ProcessMock writes from mock to ResponseWriter
 func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
-	body, _ := ioutil.ReadAll(r.Body)
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(body)) // ioutil.ReadAll closes r.Body so we need to reinitialize it
+	body := GetBodyCopy(r)
 
 	if mock.Proxy != "" {
 		pr, _ := http.NewRequest(r.Method, r.URL.String(), ioutil.NopCloser(bytes.NewBuffer(body)))

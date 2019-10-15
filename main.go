@@ -59,8 +59,7 @@ func main() {
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) error {
-	body, _ := ioutil.ReadAll(r.Body)
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	body := GetBodyCopy(r)
 
 	mock := collection.Lookup(r)
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
@@ -72,6 +71,14 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	return ProcessMock(w, r, mock)
+}
+
+func GetBodyCopy(req *http.Request) []byte {
+	bodyBytes, _ := ioutil.ReadAll(req.Body)
+	req.Body.Close()
+	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	return bodyBytes
 }
 
 func errorHandler(f func(http.ResponseWriter, *http.Request) error) http.HandlerFunc {
