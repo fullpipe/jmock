@@ -168,6 +168,11 @@ var jsonTests = []struct {
 		`{"foo":{"foo2":"b*"}}`,
 		true,
 	},
+	{
+		`{"foo":{"f": "f", "foo2":"bar"}}`,
+		`{"foo":{"foo2":"b*", "bar":1}}`,
+		false,
+	},
 }
 
 func TestLooksLikeJson(t *testing.T) {
