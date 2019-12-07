@@ -13,12 +13,6 @@ Install binary
 go get -u github.com/fullpipe/jmock
 ```
 
-or use with docker
-
-```
-docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock
-```
-
 ## Usage
 
 First create mocks collection file some where in your project. Use [standard
@@ -67,7 +61,7 @@ request matching. For example `./mocks/users.json`:
 Start jmock server
 
 ```bash
-jmock ./mocks/*.json --port 9090
+jmock "./mocks/*.json" --port 9090 --watch
 ```
 
 Thats it your fake api is ready. Check the request
@@ -81,6 +75,33 @@ Output
 {
   "name": "John Doe"
 }
+```
+
+### Usage with docker
+
+Run mock server
+
+```
+docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock
+```
+
+Or if you need to watch files
+
+```
+docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock /mocks/*.json --port 9090 --watch
+```
+
+Or with docker-compose
+
+```yaml
+services:
+    api:
+        image: fullpipe/jmock
+        command: "/mocks/*.json --port 9090 --watch"
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./mocks:/mocks
 ```
 
 ## Mocks
