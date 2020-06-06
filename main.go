@@ -15,12 +15,13 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
+var Port int
+var Watch bool
+var AllowOrigin string
+
 var collection MockCollection
 
 func main() {
-	var Port int
-	var Watch bool
-
 	var rootCmd = &cobra.Command{
 		Use:     "jmock <path to mocks>",
 		Short:   "Simple and easy to use json/post API mock server",
@@ -50,6 +51,7 @@ func main() {
 
 	rootCmd.Flags().IntVarP(&Port, "port", "p", 9090, "Specify port to listen")
 	rootCmd.Flags().BoolVarP(&Watch, "watch", "w", false, "Watch for file changes")
+	rootCmd.Flags().StringVarP(&AllowOrigin, "allow-origin", "o", "*", "Set up Access-Control-Allow-Origin header")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
@@ -114,6 +116,10 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 
 	mock := collection.Lookup(r)
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
+	if AllowOrigin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", AllowOrigin)
+	}
 
 	if mock == nil {
 		log.Println("Mock not found for request")

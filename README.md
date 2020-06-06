@@ -23,6 +23,17 @@ request matching. For example `./mocks/users.json`:
 [
   {
     "request": {
+      "method": "OPTIONS"
+    },
+    "response": {
+      "code": 204,
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  },
+  {
+    "request": {
       "method": "POST",
       "headers": {
         "Authorization": "Bearer *"
