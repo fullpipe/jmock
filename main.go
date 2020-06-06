@@ -26,7 +26,7 @@ func main() {
 		Use:     "jmock <path to mocks>",
 		Short:   "Simple and easy to use json/post API mock server",
 		Long:    `Simple and easy to use json/post API mock server`,
-		Version: "0.1.0",
+		Version: "0.2.0",
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			files, err := filepath.Glob(args[0])
