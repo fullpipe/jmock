@@ -51,6 +51,16 @@ var urlTests = []testcase{
 		Request{URL: "/f*"},
 		true,
 	},
+	{
+		httptest.NewRequest("OPTIONS", "/foo", nil),
+		Request{Method: "OPTIONS", URL: "/foo"},
+		true,
+	},
+	{
+		httptest.NewRequest("OPTIONS", "/foo", nil),
+		Request{Method: "POST", URL: "/foo"},
+		false,
+	},
 }
 
 func TestLooksLikeUrlAndMethod(t *testing.T) {
