@@ -28,7 +28,8 @@ request matching. For example `./mocks/users.json`:
     "response": {
       "code": 204,
       "headers": {
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*"
       }
     }
   },
