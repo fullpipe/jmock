@@ -23,7 +23,8 @@ request matching. For example `./mocks/users.json`:
 [
   {
     "request": {
-      "method": "OPTIONS"
+      "method": "OPTIONS",
+      "priority": 100
     },
     "response": {
       "code": 204,
@@ -124,7 +125,7 @@ Mock consists of 3 blocks `request`, `response`, `proxy`
 
 You could match request by:
 
-```json
+```jsonc
     "request": {
       "method": "POST", // http method
       "url": "/api/users/*", // query path
@@ -141,7 +142,8 @@ You could match request by:
       "json": { // JSON request body
         "name": "*",
         "gender": "?"
-      }
+      },
+      "priority": 42 // high number for more "sticky" requests
     }
 ```
 
@@ -149,7 +151,7 @@ You could match request by:
 
 For matched request server returns response:
 
-```json
+```jsonc
     "response": {
       "code": 200, // status code
       "body": "plain text or html", // response body
@@ -202,8 +204,3 @@ bypass matched request to real API.
   }
 ]
 ```
-
-## Todo
-
-- request match level
-- add more test cases

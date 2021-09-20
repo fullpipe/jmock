@@ -12,12 +12,13 @@ import (
 
 // Request describes mock request
 type Request struct {
-	Method  string            `json:"method,omitempty"`
-	URL     string            `json:"url,omitempty"`
-	Post    map[string]string `json:"post,omitempty"`
-	Query   map[string]string `json:"query,omitempty"`
-	Headers map[string]string `json:"headers,omitempty"`
-	JSON    *json.RawMessage  `json:"json,omitempty"`
+	Method   string            `json:"method,omitempty"`
+	URL      string            `json:"url,omitempty"`
+	Post     map[string]string `json:"post,omitempty"`
+	Query    map[string]string `json:"query,omitempty"`
+	Headers  map[string]string `json:"headers,omitempty"`
+	JSON     *json.RawMessage  `json:"json,omitempty"`
+	Priority int               `json:"priority,omitempty"`
 }
 
 // LooksLike checks if mock request looks like real request
