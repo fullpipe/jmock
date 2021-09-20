@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"sync"
 )
 
@@ -19,15 +20,6 @@ type Mock struct {
 type MockCollection struct {
 	mutex sync.Mutex
 	mocks []Mock
-}
-
-// Append mock to mock collection
-func (c *MockCollection) Append(m []Mock) *MockCollection {
-	c.mutex.Lock()
-	c.mocks = append(c.mocks, m...)
-	c.mutex.Unlock()
-
-	return c
 }
 
 // Lookup mock that looks like http request
@@ -54,6 +46,10 @@ func (c *MockCollection) Rebuild(files []string) {
 
 		c.mocks = append(c.mocks, mocks...)
 	}
+
+	sort.Slice(c.mocks, func(i, j int) bool {
+		return c.mocks[i].Request.Priority > c.mocks[j].Request.Priority
+	})
 
 	log.Println("Mocks found:", len(c.mocks))
 
