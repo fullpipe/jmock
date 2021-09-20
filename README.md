@@ -9,8 +9,8 @@ Simple and easy to use json/post API mock server
 
 Install binary
 
-```
-go get -u github.com/fullpipe/jmock
+```sh
+go install github.com/fullpipe/jmock@latest
 ```
 
 ## Usage
@@ -72,14 +72,14 @@ request matching. For example `./mocks/users.json`:
 
 Start jmock server
 
-```bash
+```sh
 jmock "./mocks/*.json" --port 9090 --watch
 ```
 
 Thats it your fake api is ready. Check the request
 
-```bash
-curl localhost:9091/api/users/1
+```sh
+curl localhost:9090/api/users/1
 ```
 
 Output
@@ -93,13 +93,13 @@ Output
 
 Run mock server
 
-```
+```sh
 docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock
 ```
 
 Or if you need to watch files
 
-```
+```sh
 docker run -p 9090:9090 -v ${PWD}/mocks:/mocks fullpipe/jmock /mocks/*.json --port 9090 --watch
 ```
 
@@ -124,7 +124,7 @@ Mock consists of 3 blocks `request`, `response`, `proxy`
 
 You could match request by:
 
-```
+```json
     "request": {
       "method": "POST", // http method
       "url": "/api/users/*", // query path
@@ -149,7 +149,7 @@ You could match request by:
 
 For matched request server returns response:
 
-```
+```json
     "response": {
       "code": 200, // status code
       "body": "plain text or html", // response body
@@ -167,7 +167,7 @@ For matched request server returns response:
 If you get one mock working. You could use `proxy` to
 bypass matched request to real API.
 
-```
+```json
     "proxy": "http://realapihost.loc"
 ```
 
