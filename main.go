@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-errors/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
 )
@@ -87,10 +88,14 @@ func watchAndRebuildCollection(files []string) {
 				}
 
 				go func() {
+					defer sem.Release(1)
+
 					log.Println("Changes detected. Updating mocks...")
 					time.Sleep(100 * time.Millisecond)
-					collection.Rebuild(files)
-					sem.Release(1)
+					err := collection.Rebuild(files)
+					if err != nil {
+						log.Println("Error while rebuilding collection:\n", err)
+					}
 				}()
 			case err, ok := <-watcher.Errors:
 				if !ok {
@@ -127,7 +132,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	return ProcessMock(w, r, mock)
+	return errors.WrapPrefix(ProcessMock(w, r, mock), fmt.Sprintf("[%s]", mock.Name), 0)
 }
 
 func getBodyCopy(req *http.Request) []byte {
