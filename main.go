@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-errors/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
 )
@@ -131,7 +132,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	return ProcessMock(w, r, mock)
+	return errors.WrapPrefix(ProcessMock(w, r, mock), fmt.Sprintf("[%s]", mock.Name), 0)
 }
 
 func getBodyCopy(req *http.Request) []byte {

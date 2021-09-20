@@ -14,6 +14,7 @@ import (
 
 // Mock contains mock info
 type Mock struct {
+	Name     string   `json:"name"`
 	Request  Request  `json:"request"`
 	Response Response `json:"response"`
 	Proxy    string   `json:"proxy"`
@@ -53,6 +54,12 @@ func (c *MockCollection) Rebuild(files []string) error {
 		}
 
 		for _, m := range mocks {
+			if m.Name == "" {
+				m.Name = fmt.Sprintf("%s: %s %s", f, m.Request.Method, m.Request.URL)
+			}
+		}
+
+		for _, m := range mocks {
 			if m.Response.File != nil {
 				mockDir := filepath.Dir(f)
 				absPath, err := filepath.Abs(fmt.Sprintf("%s/%s", mockDir, *m.Response.File))
@@ -61,7 +68,7 @@ func (c *MockCollection) Rebuild(files []string) error {
 				}
 
 				if _, err := os.Stat(absPath); os.IsNotExist(err) {
-					return fmt.Errorf("Data file %s not exists", absPath)
+					return fmt.Errorf("[%s] Data file %s not exists", m.Name, absPath)
 				}
 
 				m.Response.File = &absPath

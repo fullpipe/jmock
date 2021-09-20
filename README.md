@@ -22,6 +22,7 @@ request matching. For example `./mocks/users.json`:
 ```json
 [
   {
+    "name": "Allow CORS",
     "request": {
       "method": "OPTIONS",
       "priority": 100
@@ -73,6 +74,7 @@ request matching. For example `./mocks/users.json`:
     }
   },
   {
+    "name": "Get posts list",
     "request": {
       "method": "GET",
       "url": "/api/posts"
@@ -130,7 +132,8 @@ services:
 
 ## Mocks
 
-Mock consists of 3 blocks `request`, `response`, `proxy`
+Mock consists of 3 blocks `request`, `response`, `proxy`.  
+Also you could `name` to name it.
 
 ### Request
 
@@ -193,6 +196,7 @@ bypass matched request to real API.
 ```json
 [
   {
+    "name": "User registration mock",
     "request": {
       "mehtod": "POST",
       "url": "/rpc",
