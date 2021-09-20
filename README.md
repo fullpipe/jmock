@@ -133,7 +133,7 @@ services:
 ## Mocks
 
 Mock consists of 3 blocks `request`, `response`, `proxy`.  
-Also you could `name` to name it.
+Also you could use `name` to name it.
 
 ### Request
 
