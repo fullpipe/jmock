@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strings"
 )
 
@@ -13,12 +14,6 @@ import (
 func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 	if mock.Proxy != "" {
 		return proxyRequest(w, r, mock)
-	}
-
-	if nil != mock.Response.Headers {
-		for key, value := range *mock.Response.Headers {
-			w.Header().Set(key, value)
-		}
 	}
 
 	if mock.Response.Code != nil {
@@ -34,6 +29,29 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 		return nil
 	}
 
+	if mock.Response.File != nil {
+		temp, err := ioutil.ReadFile(*mock.Response.File)
+		if err != nil {
+			return err
+		}
+
+		switch filepath.Ext(*mock.Response.File) {
+		case ".json":
+			w.Header().Set("Content-Type", "application/json")
+		case ".html":
+			w.Header().Set("Content-Type", "text/html")
+		case ".xml":
+			w.Header().Set("Content-Type", "application/xml")
+		}
+
+		_, err = w.Write(temp)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
 	if mock.Response.JSON != nil {
 		w.Header().Set("Content-Type", "application/json")
 		_, err := w.Write(*mock.Response.JSON)
@@ -42,6 +60,12 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 		}
 
 		return nil
+	}
+
+	if nil != mock.Response.Headers {
+		for key, value := range *mock.Response.Headers {
+			w.Header().Set(key, value)
+		}
 	}
 
 	return nil

@@ -87,10 +87,14 @@ func watchAndRebuildCollection(files []string) {
 				}
 
 				go func() {
+					defer sem.Release(1)
+
 					log.Println("Changes detected. Updating mocks...")
 					time.Sleep(100 * time.Millisecond)
-					collection.Rebuild(files)
-					sem.Release(1)
+					err := collection.Rebuild(files)
+					if err != nil {
+						log.Println("Error while rebuilding collection:\n", err)
+					}
 				}()
 			case err, ok := <-watcher.Errors:
 				if !ok {

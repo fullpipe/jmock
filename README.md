@@ -64,6 +64,17 @@ request matching. For example `./mocks/users.json`:
   {
     "request": {
       "method": "GET",
+      "url": "/api/users/7",
+      "pririty": 42
+    },
+    "response": {
+      "code": 200,
+      "file": "data/user-7.json"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
       "url": "/api/posts"
     },
     "proxy": "http://realapi.loc"
@@ -154,10 +165,13 @@ For matched request server returns response:
 ```jsonc
     "response": {
       "code": 200, // status code
+
       "body": "plain text or html", // response body
-      "json": { // response body with json
+      "json": { // OR response body with json
         "name": "John Doe"
       },
+      "file": "data/user-7.json", // OR path to a file with data for response body
+
       "headers": { // add response headers if required
         "Access-Control-Allow-Origin": "*"
       }
