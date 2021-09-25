@@ -24,9 +24,3 @@ jobs:
         with:
           push: true
           tags: fullpipe/jmock:latest
-      - name: Update repo description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: fullpipe/jmock
