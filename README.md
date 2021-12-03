@@ -66,7 +66,7 @@ request matching. For example `./mocks/users.json`:
     "request": {
       "method": "GET",
       "url": "/api/users/7",
-      "pririty": 42
+      "priority": 42
     },
     "response": {
       "code": 200,

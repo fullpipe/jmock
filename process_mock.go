@@ -16,11 +16,17 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 		return proxyRequest(w, r, mock)
 	}
 
-	if mock.Response.Code != nil {
-		w.WriteHeader(*mock.Response.Code)
+	if nil != mock.Response.Headers {
+		for key, value := range *mock.Response.Headers {
+			w.Header().Set(key, value)
+		}
 	}
 
 	if mock.Response.Body != nil {
+		if mock.Response.Code != nil {
+			w.WriteHeader(*mock.Response.Code)
+		}
+
 		_, err := w.Write([]byte(*mock.Response.Body))
 		if err != nil {
 			return err
@@ -35,13 +41,19 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 			return err
 		}
 
-		switch filepath.Ext(*mock.Response.File) {
-		case ".json":
-			w.Header().Set("Content-Type", "application/json")
-		case ".html":
-			w.Header().Set("Content-Type", "text/html")
-		case ".xml":
-			w.Header().Set("Content-Type", "application/xml")
+		if w.Header().Get("Content-Type") == "" {
+			switch filepath.Ext(*mock.Response.File) {
+			case ".json":
+				w.Header().Set("Content-Type", "application/json")
+			case ".html":
+				w.Header().Set("Content-Type", "text/html")
+			case ".xml":
+				w.Header().Set("Content-Type", "application/xml")
+			}
+		}
+
+		if mock.Response.Code != nil {
+			w.WriteHeader(*mock.Response.Code)
 		}
 
 		_, err = w.Write(temp)
@@ -53,19 +65,23 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 	}
 
 	if mock.Response.JSON != nil {
-		w.Header().Set("Content-Type", "application/json")
+		if w.Header().Get("Content-Type") == "" {
+			w.Header().Set("Content-Type", "application/json")
+		}
+
+		if mock.Response.Code != nil {
+			w.WriteHeader(*mock.Response.Code)
+		}
+
 		_, err := w.Write(*mock.Response.JSON)
 		if err != nil {
 			return err
 		}
 
+		// if mock.Response.Code != nil {
+		// 	w.WriteHeader(*mock.Response.Code)
+		// }
 		return nil
-	}
-
-	if nil != mock.Response.Headers {
-		for key, value := range *mock.Response.Headers {
-			w.Header().Set(key, value)
-		}
 	}
 
 	return nil

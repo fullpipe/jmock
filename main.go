@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/go-errors/errors"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
 )
@@ -30,6 +30,7 @@ func main() {
 		Version: "0.2.0",
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(args[0])
 			files, err := filepath.Glob(args[0])
 			if err != nil {
 				log.Fatal(err)
@@ -68,9 +69,9 @@ func watchAndRebuildCollection(files []string) {
 	}
 	defer watcher.Close()
 
-	var sem = semaphore.NewWeighted(1)
-
+	sem := semaphore.NewWeighted(1)
 	done := make(chan bool)
+
 	go func() {
 		for {
 			select {
@@ -127,12 +128,12 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if mock == nil {
-		log.Println("Mock not found for request")
+		log.Printf("Mock not found for request: %s %s\n", r.Method, r.URL.Path)
 		w.WriteHeader(501)
 		return nil
 	}
 
-	return errors.WrapPrefix(ProcessMock(w, r, mock), fmt.Sprintf("[%s]", mock.Name), 0)
+	return errors.Wrap(ProcessMock(w, r, mock), mock.Name)
 }
 
 func getBodyCopy(req *http.Request) []byte {
