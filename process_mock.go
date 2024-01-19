@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"crypto/tls"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -36,7 +38,7 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 	}
 
 	if mock.Response.File != nil {
-		temp, err := ioutil.ReadFile(*mock.Response.File)
+		temp, err := os.ReadFile(*mock.Response.File)
 		if err != nil {
 			return err
 		}
@@ -89,7 +91,7 @@ func ProcessMock(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 
 func proxyRequest(w http.ResponseWriter, r *http.Request, mock *Mock) error {
 	body := getBodyCopy(r)
-	pr, _ := http.NewRequest(r.Method, r.URL.String(), ioutil.NopCloser(bytes.NewBuffer(body)))
+	pr, _ := http.NewRequest(r.Method, r.URL.String(), io.NopCloser(bytes.NewBuffer(body)))
 	pr.Header = r.Header
 
 	pr.URL.Host = mock.Proxy

@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -36,15 +36,22 @@ func main() {
 				log.Fatal(err)
 			}
 
-			collection.Rebuild(files)
+			err = collection.Rebuild(files)
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			if Watch {
 				go watchAndRebuildCollection(files)
 			}
 
 			http.HandleFunc("/", errorHandler(httpHandler))
-			log.Println("Listening on port", fmt.Sprintf(":%d", Port))
-			err = http.ListenAndServe(fmt.Sprintf(":%d", Port), nil)
+			server := &http.Server{
+				Addr:              fmt.Sprintf(":%d", Port),
+				ReadHeaderTimeout: 3 * time.Second,
+			}
+
+			err = server.ListenAndServe()
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -93,16 +100,16 @@ func watchAndRebuildCollection(files []string) {
 
 					log.Println("Changes detected. Updating mocks...")
 					time.Sleep(100 * time.Millisecond)
-					err := collection.Rebuild(files)
-					if err != nil {
-						log.Println("Error while rebuilding collection:\n", err)
+					errRebuild := collection.Rebuild(files)
+					if errRebuild != nil {
+						log.Println("Error while rebuilding collection:\n", errRebuild)
 					}
 				}()
-			case err, ok := <-watcher.Errors:
+			case errWatch, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				log.Println("Watch error:", err)
+				log.Println("Watch error:", errWatch)
 			}
 		}
 	}()
@@ -121,7 +128,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 	body := getBodyCopy(r)
 
 	mock := collection.Lookup(r)
-	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
 
 	if AllowOrigin != "" {
 		w.Header().Set("Access-Control-Allow-Origin", AllowOrigin)
@@ -137,9 +144,9 @@ func httpHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func getBodyCopy(req *http.Request) []byte {
-	bodyBytes, _ := ioutil.ReadAll(req.Body)
+	bodyBytes, _ := io.ReadAll(req.Body)
 	req.Body.Close()
-	req.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+	req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	return bodyBytes
 }

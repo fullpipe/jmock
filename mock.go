@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -42,7 +41,7 @@ func (c *MockCollection) Rebuild(files []string) error {
 
 	c.mocks = []*Mock{}
 	for _, f := range files {
-		temp, err := ioutil.ReadFile(f)
+		temp, err := os.ReadFile(f)
 		if err != nil {
 			return fmt.Errorf("Unable to read %s file", f)
 		}

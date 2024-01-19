@@ -91,7 +91,7 @@ func compareJSON(mock []byte, real []byte, dataType jsonparser.ValueType) bool {
 				jsonMatches = false
 			}
 
-			//log.Println("compareObj: ", value, rvalue, dataType, compareJson(value, rvalue, dataType))
+			// log.Println("compareObj: ", value, rvalue, dataType, compareJson(value, rvalue, dataType))
 			if !compareJSON(value, rvalue, dataType) {
 				jsonMatches = false
 			}

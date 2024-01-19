@@ -1,0 +1,115 @@
+# run:
+#   skip-dirs:
+#     - internal/generated
+
+# all available settings of specific linters
+linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/fullpipe/jmock)
+  errcheck:
+    check-type-assertions: true
+  govet:
+    check-shadowing: false
+    enable-all: true
+    disable:
+      - fieldalignment
+    settings:
+      printf:
+        funcs:
+          - printf
+          - debugf
+          - infof
+          - warnf
+          - errorf
+          - fatalf
+          - wrapf
+  gocyclo:
+    min-complexity: 14
+  misspell:
+    locale: US
+  unparam:
+    check-exported: true
+  revive:
+    # see https://github.com/mgechev/revive#available-rules for details.
+    ignore-generated-header: true
+    severity: warning
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+      - name: add-constant
+        arguments:
+          - maxLitCount: '3'
+            allowStrs: '""'
+            allowInts: '0,1,2'
+            allowFloats: '0.0,0.,1.0,1.,2.0,2.'
+
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - revive
+    - gosec
+    - unconvert
+    - goconst
+    - misspell
+    - prealloc
+    - exportloopref
+    - gochecknoinits
+    - gocritic
+    - dupl
+    - gocyclo
+    - ineffassign
+    - gci
+  fast: false
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - scopelint
+        - revive
+    - path: gen/
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - scopelint
+        - revive
+
+  max-per-linter: 0
+  max-same-issues: 0
+  new: false
